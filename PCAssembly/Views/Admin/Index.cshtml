@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<h1 class="mb-4">Admin Panel</h1>
+
+<div class="container">
+    <div class="row text-center">
+        <div class="col-md-3 mb-3">
+            <a asp-controller="Assemblies" asp-action="Index" class="btn btn-primary w-100 p-3 d-flex flex-column align-items-center">
+                <i class="bi bi-pc-display mb-2" style="font-size: 2rem;"></i>
+                Manage Assemblies
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a asp-controller="Components" asp-action="Index" class="btn btn-success w-100 p-3 d-flex flex-column align-items-center">
+                <i class="bi bi-puzzle mb-2" style="font-size: 2rem;"></i>
+                Manage Components
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a asp-controller="Reviews" asp-action="Index" class="btn btn-warning w-100 p-3 d-flex flex-column align-items-center">
+                <i class="bi bi-chat-left-text mb-2" style="font-size: 2rem;"></i>
+                Manage Reviews
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a asp-controller="TypeComponents" asp-action="Index" class="btn btn-info w-100 p-3 d-flex flex-column align-items-center text-white">
+                <i class="bi bi-tags mb-2" style="font-size: 2rem;"></i>
+                Manage Type Components
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a asp-controller="AssemblyComponents" asp-action="Index" class="btn btn-info w-100 p-3 d-flex flex-column align-items-center text-white">
+                <i class="bi bi-tags mb-2" style="font-size: 2rem;"></i>
+                Manage Assembly Component
+            </a>
+        </div>
+    </div>
+</div>

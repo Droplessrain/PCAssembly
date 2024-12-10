@@ -1,0 +1,95 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<PCAssembly.Component>
+
+@{
+    ViewData["Title"] = "Компоненты";
+}
+
+<h1>Компоненты</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="AllComponents"
+                   asp-route-sortColumn="Name"
+                   asp-route-sortDirection="@(ViewBag.CurrentSortColumn == "Name" && ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")"
+                   asp-route-page="@ViewBag.PageNumber">Название</a>
+            </th>
+            <th>
+                <a asp-action="AllComponents"
+                   asp-route-sortColumn="Description"
+                   asp-route-sortDirection="@(ViewBag.CurrentSortColumn == "Description" && ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")"
+                   asp-route-page="@ViewBag.PageNumber">Описание</a>
+            </th>
+            <th>
+                <a asp-action="AllComponents"
+                   asp-route-sortColumn="Price"
+                   asp-route-sortDirection="@(ViewBag.CurrentSortColumn == "Price" && ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")"
+                   asp-route-page="@ViewBag.PageNumber">Цена</a>
+            </th>
+            <th>
+                <a asp-action="AllComponents"
+                   asp-route-sortColumn="Type"
+                   asp-route-sortDirection="@(ViewBag.CurrentSortColumn == "Type" && ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")"
+                   asp-route-page="@ViewBag.PageNumber">Тип</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                <td>@Html.DisplayFor(modelItem => item.TypeComponents.TypeName)</td>
+                <td>
+                    <form asp-action="AddToAssembly" method="post">
+                        <input type="hidden" name="componentId" value="@item.ComponentId" />
+                        <select name="assemblyId" class="form-control d-inline-block" style="width: auto;">
+                            @if (ViewBag.Assemblies != null)
+                            {
+                                @foreach (var assembly in ViewBag.Assemblies)
+                                {
+                                    <option value="@assembly.AssemblyId">@assembly.AssemblyName</option>
+                                }
+                            }
+                            else
+                            {
+                                <option disabled>Нет доступных сборок</option>
+                            }
+                        </select>
+                        <button asp-action="AddToAssembly" type="submit" class="btn btn-primary">Добавить в сборку</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination justify-content-center">
+    @Html.PagedListPager(Model, page => Url.Action("AllComponents", new
+        {
+            page,
+            sortColumn = ViewBag.CurrentSortColumn,
+            sortDirection = ViewBag.CurrentSortDirection
+        }),
+            new PagedListRenderOptions
+    {
+        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+        DisplayLinkToLastPage = PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+        DisplayLinkToNextPage = PagedListDisplayMode.Always,
+        MaximumPageNumbersToDisplay = 5,
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" },
+        PreviousElementClass = "page-item",
+        NextElementClass = "page-item",
+        ActiveLiElementClass = "active"
+    })
+</div>

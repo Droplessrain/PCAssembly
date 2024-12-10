@@ -1,0 +1,56 @@
+﻿@model IEnumerable<PCAssembly.Assembly>
+
+@{
+    ViewData["Title"] = "Мои Сборки";
+}
+
+<h1>Мои сборки</h1>
+
+<form method="get">
+    <div class="form-group">
+        <label for="componentFilter">Фильтр по компоненту</label>
+        <input type="text" id="componentFilter" name="componentFilter" class="form-control" value="@ViewData["CurrentFilter"]" />
+    </div>
+    <button type="submit" class="btn btn-primary">Применить фильтр</button>
+</form>
+
+<p>
+    <a asp-action="CreateAssembly" class="btn btn-primary">Создать</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AssemblyName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Avgrating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AssemblyName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Avgrating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.UserName)
+                </td>
+                <td>
+                    <a asp-controller="UserAssemblyComponents" asp-action="AssemblyComponents" asp-route-id="@item.AssemblyId">Details</a>
+                    <a asp-action="DeleteAssembly" asp-route-id="@item.AssemblyId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

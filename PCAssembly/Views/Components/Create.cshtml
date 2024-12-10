@@ -1,0 +1,52 @@
+﻿@model PCAssembly.Component
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Component</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            <div>
+                <label asp-for="TypeComponentsId"></label>
+                <select asp-for="TypeComponentsId" asp-items="ViewBag.TypeComponentsId">
+                    <option value="">Select Type Component</option> <!-- Option for empty value -->
+                </select>
+                <span asp-validation-for="TypeComponentsId"></span>
+            </div>
+
+            <div>
+                <label asp-for="Name"></label>
+                <input asp-for="Name" />
+                <span asp-validation-for="Name"></span>
+            </div>
+
+            <div>
+                <label asp-for="Description"></label>
+                <textarea asp-for="Description"></textarea>
+                <span asp-validation-for="Description"></span>
+            </div>
+
+            <div>
+                <label asp-for="Price"></label>
+                <input asp-for="Price" />
+                <span asp-validation-for="Price"></span>
+            </div>
+
+            <button type="submit">Create</button>
+        </form>
+
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

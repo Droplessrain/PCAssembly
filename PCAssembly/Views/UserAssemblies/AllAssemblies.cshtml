@@ -1,0 +1,76 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<PCAssembly.Assembly>
+
+@{
+    ViewData["Title"] = "Сборки";
+}
+
+<h1>Сборки</h1>
+
+<form method="get">
+    <div class="form-group">
+        <label for="assemblyFilter">Фильтр по названию сборки</label>
+        <input type="text" id="assemblyFilter" name="assemblyFilter" class="form-control" value="@ViewBag.CurrentFilter" />
+    </div>
+    <button type="submit" class="btn btn-primary">Применить фильтр</button>
+</form>
+
+<table class="table table-striped table-bordered" id="assembliesTable">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="AllAssemblies" asp-route-sortColumn="AssemblyName" asp-route-sortDirection="@(ViewBag.CurrentSortColumn == "AssemblyName" && ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")" asp-route-assemblyFilter="@ViewBag.CurrentFilter">
+                    Название
+                </a>
+            </th>
+            <th>
+                <a asp-action="AllAssemblies" asp-route-sortColumn="Avgrating" asp-route-sortDirection="@(ViewBag.CurrentSortColumn == "Avgrating" && ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")" asp-route-assemblyFilter="@ViewBag.CurrentFilter">
+                    Рейтинг
+                </a>
+            </th>
+            <th>
+                <a asp-action="AllAssemblies" asp-route-sortColumn="User" asp-route-sortDirection="@(ViewBag.CurrentSortColumn == "User" && ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")" asp-route-assemblyFilter="@ViewBag.CurrentFilter">
+                    Пользователь
+                </a>
+            </th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.AssemblyName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Avgrating)</td>
+                <td>@Html.DisplayFor(modelItem => item.User.UserName)</td>
+                <td>
+                    <a asp-controller="UserAssemblyComponents" asp-action="AssemblyComponents" asp-route-id="@item.AssemblyId" class="btn btn-info">Details</a>
+                    
+                    <form asp-action="AddAssemblyToUser" method="post" class="d-inline">
+                        <input type="hidden" name="assemblyId" value="@item.AssemblyId" />
+                        <button type="submit" class="btn btn-success">Добавить себе</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination justify-content-center">
+    @Html.PagedListPager(Model, page => Url.Action("AllAssemblies", new { page, sortColumn = ViewBag.CurrentSortColumn, sortDirection = ViewBag.CurrentSortDirection, assemblyFilter = ViewBag.CurrentFilter }),
+            new PagedListRenderOptions
+    {
+        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+        DisplayLinkToLastPage = PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+        DisplayLinkToNextPage = PagedListDisplayMode.Always,
+        MaximumPageNumbersToDisplay = 5,
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" },
+        PreviousElementClass = "page-item",
+        NextElementClass = "page-item",
+        ActiveLiElementClass = "active"
+    })
+</div>

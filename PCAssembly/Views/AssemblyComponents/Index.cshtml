@@ -1,0 +1,48 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<PCAssembly.AssemblyComponent>
+
+@{
+    ViewData["Title"] = "Assembly Components";
+}
+
+<h1>Assembly Components</h1>
+
+<p>
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Back to Admin Panel</a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Сборка</th>
+            <th>Компонент</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Assembly.AssemblyName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Component.Name)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination justify-content-center">
+    @Html.PagedListPager(Model,
+            page => Url.Action("Index", new { page }),
+            new PagedListRenderOptions
+    {
+        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+        DisplayLinkToLastPage = PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+        DisplayLinkToNextPage = PagedListDisplayMode.Always,
+        MaximumPageNumbersToDisplay = 5,
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" },
+        ActiveLiElementClass = "active"
+    })
+</div>

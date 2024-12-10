@@ -1,0 +1,36 @@
+﻿@model PCAssembly.AssemblyComponent
+
+@{
+    ViewData["Title"] = "Add to Assembly";
+}
+
+<h1>Add Component to Assembly</h1>
+
+<form asp-action="AddToAssembly" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="AssemblyId" class="control-label">Select Assembly</label>
+        <select asp-for="AssemblyId" class="form-control" asp-items="ViewBag.AssemblyId"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ComponentId" class="control-label">Component ID</label>
+        <input asp-for="ComponentId" class="form-control" />
+        <span asp-validation-for="ComponentId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Add Component" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="MyAssemblies">Back to Assemblies</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

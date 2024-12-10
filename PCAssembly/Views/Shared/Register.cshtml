@@ -1,0 +1,50 @@
+﻿@model PCAssembly.Models.RegisterModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <form asp-action="Register" method="post">
+            <h2 class="text-center mb-4">Регистрация</h2>
+            <hr />
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.UserName" class="form-control" placeholder="Введите логин" />
+                <label asp-for="Input.UserName">Логин</label>
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Email" class="form-control" placeholder="Введите email" />
+                <label asp-for="Input.Email">Email</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Password" type="password" class="form-control" placeholder="Введите пароль" />
+                <label asp-for="Input.Password">Пароль</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ConfirmPassword" type="password" class="form-control" placeholder="Подтвердите пароль" />
+                <label asp-for="Input.ConfirmPassword">Подтвердите пароль</label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="w-100 btn btn-success btn-lg">Зарегистрироваться</button>
+
+            <div class="text-center mt-3">
+                <a href="@Url.Action("Login", "Account")" class="text-dark">Уже есть аккаунт? Войдите</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
