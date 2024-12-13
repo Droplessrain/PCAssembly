@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PCAssembly;
 using PCAssembly.Data;
+using PCAssembly.Services;
 using X.PagedList;
 using X.PagedList.Extensions;
 using X.PagedList.Mvc.Core;
@@ -21,19 +22,27 @@ namespace PCAssembly.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index(int? page)
+        public IActionResult Index(int? page, string sortColumn = "AssemblyName", string sortDirection = "asc")
         {
-            int pageNumber = page ?? 1; // Номер страницы, если не задан, то по умолчанию 1
-            int pageSize = 10; // Количество записей на странице
+            int pageNumber = page ?? 1;
+            int pageSize = 10;
 
-            var computerAssemblyContext = _context.Assemblies.Include(a => a.User);
+            // Получаем данные из базы
+            var assembliesQuery = _context.Assemblies.Include(a => a.User).AsQueryable();
 
-            var assembliesList = await computerAssemblyContext.ToListAsync(); // Материализуем запрос в список
+            // Применяем сортировку
+            assembliesQuery = SortingService.SortAssemblies(assembliesQuery, sortColumn, sortDirection);
 
-            var assembliesPaged = assembliesList.ToPagedList(pageNumber, pageSize);
+            // Пагинация
+            var pagedAssemblies = assembliesQuery.ToPagedList(pageNumber, pageSize);
 
-            return View(assembliesPaged); // Передаем пагинированные данные в представление
+            // Передаем текущую сортировку в представление
+            ViewBag.CurrentSortColumn = sortColumn;
+            ViewBag.CurrentSortDirection = sortDirection;
+
+            return View(pagedAssemblies);
         }
+
 
 
         // GET: Assemblies/Details/5
@@ -62,9 +71,7 @@ namespace PCAssembly.Controllers
             return View();
         }
 
-        // POST: Assemblies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AssemblyId,UserId,AssemblyName,Avgrating")] Assembly @assembly)

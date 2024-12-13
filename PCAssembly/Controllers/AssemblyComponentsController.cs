@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PCAssembly;
 using PCAssembly.Data;
+using PCAssembly.Services;
 using X.PagedList.Extensions;
 
 namespace PCAssembly.Controllers
@@ -21,16 +22,30 @@ namespace PCAssembly.Controllers
         }
 
         // GET: AssemblyComponents
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, string sortColumn = "AssemblyName", string sortDirection = "asc")
         {
             int pageNumber = page ?? 1; // Номер страницы, если не задан, то по умолчанию 1
             int pageSize = 10; // Количество записей на странице
 
-            var computerAssemblyContext = _context.AssemblyComponents.Include(a => a.Assembly).Include(a => a.Component);
+            // Получаем данные из базы
+            var computerAssemblyContext = _context.AssemblyComponents
+                .Include(a => a.Assembly)
+                .Include(a => a.Component)
+                .AsQueryable();
 
-            var assembliesList = await computerAssemblyContext.ToListAsync(); // Материализуем запрос в список
+            // Применяем сортировку
+            computerAssemblyContext = SortingService.SortAssemblyComponents(computerAssemblyContext, sortColumn, sortDirection);
 
+            // Материализуем запрос в список
+            var assembliesList = await computerAssemblyContext.ToListAsync();
+
+            // Применяем пагинацию
             var assembliesPaged = assembliesList.ToPagedList(pageNumber, pageSize);
+
+            // Передаем текущую сортировку в представление
+            ViewBag.CurrentSortColumn = sortColumn;
+            ViewBag.CurrentSortDirection = sortDirection;
+
             return View(assembliesPaged);
         }
 

@@ -27,9 +27,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Avgrating)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -42,9 +39,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Avgrating)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.UserName)
                 </td>
                 <td>
                     <a asp-controller="UserAssemblyComponents" asp-action="AssemblyComponents" asp-route-id="@item.AssemblyId">Details</a>

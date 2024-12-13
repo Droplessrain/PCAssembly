@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PCAssembly;
 using PCAssembly.Data;
+using PCAssembly.Services;
 using X.PagedList.Extensions;
 
 namespace PCAssembly.Controllers
@@ -20,17 +21,24 @@ namespace PCAssembly.Controllers
         }
 
         // GET: Components
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, string sortColumn = "Name", string sortDirection = "asc")
         {
             int pageNumber = page ?? 1; // Номер страницы, если не задан, то по умолчанию 1
             int pageSize = 10;         // Количество записей на странице
 
-            var componentsQuery = _context.Components
+            IQueryable<Component> componentsQuery = _context.Components
                                           .Include(c => c.TypeComponents); // Запрос компонентов с типами
+
+            // Применяем сортировку
+            componentsQuery = SortingService.SortComponents(componentsQuery.AsQueryable(), sortColumn, sortDirection);
 
             var componentsList = await componentsQuery.ToListAsync();      // Материализуем запрос в список
 
             var pagedComponents = componentsList.ToPagedList(pageNumber, pageSize); // Применяем пагинацию
+
+            // Передаем текущую сортировку в представление
+            ViewBag.CurrentSortColumn = sortColumn;
+            ViewBag.CurrentSortDirection = sortDirection;
 
             return View(pagedComponents);
         }

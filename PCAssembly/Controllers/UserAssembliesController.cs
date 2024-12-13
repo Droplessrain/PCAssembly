@@ -5,6 +5,7 @@ using PCAssembly.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList.Extensions;
 using PCAssembly.Data;
+using PCAssembly.ViewModels;
 
 namespace PCAssembly.Controllers
 {
@@ -88,6 +89,57 @@ namespace PCAssembly.Controllers
 
             return View(pagedAssemblies);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddAssemblyToUser(int assemblyId)
+        {
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
+
+            var sourceComponents = await _context.AssemblyComponents
+                .Where(ac => ac.AssemblyId == assemblyId)
+                .Include(ac => ac.Assembly)
+                .Include(ac => ac.Component)
+                .ToListAsync();
+
+            if (!sourceComponents.Any() || sourceComponents.First().Assembly == null)
+            {
+                return NotFound("Сборка не найдена или её компоненты отсутствуют.");
+            }
+
+            var newAssembly = new Assembly
+            {
+                AssemblyName = $"{sourceComponents.First().Assembly.AssemblyName}",
+                UserId = currentUserId,
+                Avgrating = null
+            };
+
+            _context.Assemblies.Add(newAssembly);
+            await _context.SaveChangesAsync(); // Сохраняем для генерации нового AssemblyId
+
+            // Добавляем компоненты из исходной сборки в новую
+            foreach (var component in sourceComponents)
+            {
+                var newAssemblyComponent = new AssemblyComponent
+                {
+                    AssemblyId = newAssembly.AssemblyId,
+                    ComponentId = component.ComponentId
+                };
+
+                _context.AssemblyComponents.Add(newAssemblyComponent);
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Возвращаемся на страницу со списком сборок
+            return RedirectToAction(nameof(MyAssemblies));
+        }
+
 
         [HttpGet]
         public IActionResult CreateAssembly()

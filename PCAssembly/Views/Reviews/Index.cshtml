@@ -9,19 +9,43 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Back to Admin Panel</a>
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary">Вернуться</a>
 </p>
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Создать</a>
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Текст </th>
-            <th>Оценка </th>
-            <th>Сборка </th>
-            <th>Пользователь </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="ReviewText" asp-route-sortDirection="@(ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")">
+                    Текст
+                    @if (ViewBag.CurrentSortColumn == "ReviewText")
+                    {
+                        <span>@(ViewBag.CurrentSortDirection == "asc" ? "▲" : "▼")</span>
+                    }
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="Rating" asp-route-sortDirection="@(ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")">
+                    Оценка
+                    @if (ViewBag.CurrentSortColumn == "Rating")
+                    {
+                        <span>@(ViewBag.CurrentSortDirection == "asc" ? "▲" : "▼")</span>
+                    }
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="Assembly" asp-route-sortDirection="@(ViewBag.CurrentSortDirection == "asc" ? "desc" : "asc")">
+                    Сборка
+                    @if (ViewBag.CurrentSortColumn == "Assembly")
+                    {
+                        <span>@(ViewBag.CurrentSortDirection == "asc" ? "▲" : "▼")</span>
+                    }
+                </a>
+            </th>
+            <th>Пользователь</th>
             <th></th>
         </tr>
     </thead>
@@ -29,18 +53,10 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ReviewText)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Rating)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Assembly.AssemblyId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.Id)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.ReviewText)</td>
+                <td>@Html.DisplayFor(modelItem => item.Rating)</td>
+                <td>@Html.DisplayFor(modelItem => item.Assembly.AssemblyId)</td>
+                <td>@Html.DisplayFor(modelItem => item.User.Id)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.ReviewId">Details</a> |
@@ -52,7 +68,7 @@
 </table>
 
 <div class="pagination justify-content-center">
-    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSortColumn, sortDirection = ViewBag.CurrentSortDirection }),
             new PagedListRenderOptions
     {
         DisplayLinkToFirstPage = PagedListDisplayMode.Always,
@@ -60,7 +76,7 @@
         DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
         DisplayLinkToNextPage = PagedListDisplayMode.Always,
         MaximumPageNumbersToDisplay = 5,
-        UlElementClasses = new[] { "pagination" }, // Передаем массив строк
+        UlElementClasses = new[] { "pagination" },
         LiElementClasses = new[] { "page-item" },
         PageClasses = new[] { "page-link" },
         PreviousElementClass = "page-item",

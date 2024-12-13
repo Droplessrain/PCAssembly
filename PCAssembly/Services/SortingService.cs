@@ -25,6 +25,17 @@
             };
         }
 
+        public static IQueryable<AssemblyComponent> SortAssemblyComponents(IQueryable<AssemblyComponent> query, string sortColumn, string sortDirection)
+        {
+            return sortColumn switch
+            {
+                "AssemblyName" => sortDirection == "asc" ? query.OrderBy(ac => ac.Assembly.AssemblyName) : query.OrderByDescending(ac => ac.Assembly.AssemblyName),
+                "ComponentName" => sortDirection == "asc" ? query.OrderBy(ac => ac.Component.Name) : query.OrderByDescending(ac => ac.Component.Name),
+                // Добавьте другие поля для сортировки, если нужно
+                _ => query.OrderBy(ac => ac.Assembly.AssemblyName) // По умолчанию сортируем по имени сборки
+            };
+        }
+
         public static IQueryable<Review> ReviewsSorting(IQueryable<Review> reviewsQuery, string sortOrder, string sortDirection)
         {
             switch (sortOrder)

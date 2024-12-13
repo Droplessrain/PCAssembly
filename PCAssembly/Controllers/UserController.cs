@@ -26,9 +26,5 @@ namespace PCAssembly.Controllers
         {
             return View();
         }
-
-        
-
-          
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PCAssembly;
 using PCAssembly.Data;
+using PCAssembly.Services;
 using X.PagedList.Extensions;
 
 namespace PCAssembly.Controllers
@@ -21,17 +22,25 @@ namespace PCAssembly.Controllers
         }
 
         // GET: Reviews
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int? page, string sortOrder = "ReviewText", string sortDirection = "asc")
         {
             int pageNumber = page ?? 1;
             int pageSize = 10;
 
-            var computerAssemblyContext = _context.Reviews.Include(r => r.Assembly).Include(r => r.User);
-            var assembliesList = await computerAssemblyContext.ToListAsync(); // Материализуем запрос в список
+            IQueryable<Review> reviewsQuery = _context.Reviews.Include(r => r.Assembly).Include(r => r.User);
 
-            var assembliesPaged = assembliesList.ToPagedList(pageNumber, pageSize);
+            // Применяем сортировку
+            reviewsQuery = SortingService.ReviewsSorting(reviewsQuery.AsQueryable(), sortOrder, sortDirection);
 
-            return View(assembliesPaged);
+            var reviewsList = await reviewsQuery.ToListAsync(); // Материализуем запрос в список
+
+            var pagedReviews = reviewsList.ToPagedList(pageNumber, pageSize);
+
+            // Передаем текущую сортировку в представление
+            ViewBag.CurrentSortColumn = sortOrder;
+            ViewBag.CurrentSortDirection = sortDirection;
+
+            return View(pagedReviews);
         }
 
         // GET: Reviews/Details/5
